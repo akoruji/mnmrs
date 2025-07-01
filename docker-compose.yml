@@ -1,0 +1,57 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=openmrs
+      - MYSQL_USER=openmrs
+      - MYSQL_PASSWORD=root
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  tomcat1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./runtimes/tomcat1:/root/.OpenMRS
+      - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war:ro
+      - ./shared_modules:/root/.OpenMRS/modules
+    depends_on:
+      - mysql
+
+  tomcat2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8080"
+    volumes:
+      - ./runtimes/tomcat2:/root/.OpenMRS
+      - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war:ro
+      - ./shared_modules:/root/.OpenMRS/modules
+    depends_on:
+      - mysql
+
+  tomcat3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8080"
+    volumes:
+      - ./runtimes/tomcat3:/root/.OpenMRS
+      - ./openmrs.war:/usr/local/tomcat/webapps/openmrs.war:ro
+      - ./shared_modules:/root/.OpenMRS/modules
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+  shared_modules:
